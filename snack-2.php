@@ -10,9 +10,14 @@ Se tutto è ok stampare “Accesso riuscito”, altrimenti “Accesso negato”.
   $mail = $_GET["mail"];
   $age = $_GET["age"];
 
-  if ((strlen($name) > 3) && (strpos($mail,'@')) && (strpos($mail,'.'))){
-    $messaggio = "okay";
-  }
+  if (empty($name) && empty($mail) && empty($age)){
+    $messaggio = "please provide your name, mail and age";
+  } elseif ( (strlen($name) > 3) && (strpos($mail,'@'))
+   && (strpos($mail,'.')) && is_numeric($age) ){
+     $messaggio = "access granted";
+   } else {
+     $messaggio = "sth is wrong, check your data again please";
+   }
 ?>
 
 
