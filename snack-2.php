@@ -9,15 +9,29 @@ Se tutto è ok stampare “Accesso riuscito”, altrimenti “Accesso negato”.
   $name = $_GET["name"];
   $mail = $_GET["mail"];
   $age = $_GET["age"];
+  //dovrebbe rimuovere i caratteri non possibili in una mail , disinfetta in pratica
+  $mail = filter_var($mail,FILTER_SANITIZE_EMAIL);
+  // range minimo e massimo per l'età
+  $min = 18;
+  $max = 99;
+
 
   if (empty($name) && empty($mail) && empty($age)){
     $messaggio = "please provide your name, mail and age";
-  } elseif ( (strlen($name) > 3) && (strpos($mail,'@'))
-   && (strpos($mail,'.')) && is_numeric($age) ){
+  } elseif (strlen($name) < 4){ // lunghezza minima accettata per il name di 4
+      $messaggio = "at least 4 characters for name";
+
+  } elseif (!filter_var($mail, FILTER_VALIDATE_EMAIL)) { // verifica che sia una mail accettabile con il !
+    $messaggio = "type down an acceptable email please";
+  } elseif (!filter_var($age,FILTER_VALIDATE_INT, array("options" => array("min_range"=>$min, "max_range"=>$max))) ) { // o con il ! o con === false prima dell'ultima tonda di chiusura
+    $messaggio = "type down an acceptable age, from 18 to 99";
+  } elseif ((strlen($name) > 3) && (strpos($mail,'@') /* se scrivi qua > -1 accetti la @ come primo carttere */ ) && (strpos($mail,'.')) && is_numeric($age)) {
      $messaggio = "access granted";
-   } else {
-     $messaggio = "sth is wrong, check your data again please";
+   }  else {
+     $messaggio = "access denied, check your data again please";
    }
+
+
 ?>
 
 
@@ -34,7 +48,8 @@ Se tutto è ok stampare “Accesso riuscito”, altrimenti “Accesso negato”.
   <p>
     <?php
       echo $messaggio;
-      var_dump($messaggio);
+      // echo $mail;
+      // var_dump($messaggio);
 
 
       // var_dump($_GET);
